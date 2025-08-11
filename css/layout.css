@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #f5f6fa;
     margin: 0;
     padding: 0;
     opacity: 0;
@@ -85,4 +85,12 @@ footer {
 footer a {
   color: #00ffff;
   text-decoration: none;
+}
+
+main {
+  min-height: 400px;
+  padding: 24px 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }

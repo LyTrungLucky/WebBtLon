@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hồ sơ cá nhân</title>
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <style>
+    .profile-container { max-width: 500px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #eee; }
+    .avatar-preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #ccc; margin-bottom: 12px; }
+    .profile-form label { display: block; margin-top: 12px; }
+    .profile-form input[type="file"] { margin-top: 8px; }
+    .profile-form input[type="password"], .profile-form input[type="text"] { width: 100%; padding: 8px; margin-top: 4px; }
+    .profile-form button { margin-top: 16px; padding: 8px 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- ...existing code... -->
+    <h1>Hồ sơ cá nhân</h1>
+    <!-- ...existing code... -->
+  </header>
+  <nav>
+        <ul class="menu">
+            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="#">Sản phẩm</a>
+                <ul class="submenu">
+                    <li><a href="#">Phụ kiện</a></li>
+                    <li><a href="#">Điện thoại</a></li>
+                    <li><a href="#">Laptop</a></li>
+                    <li><a href="#">Máy tính bảng</a></li>
+                </ul>
+            </li>
+            <li><a href="#sale">Khuyến mãi</a></li>
+            <li><a href="mailto:lethanhlytrung123@gmail.com">Liên hệ</a></li>
+            <li><a href="purchased.html">Hàng đã mua</a></li>
+            <li class="account-menu">
+                <a href="#">Tài khoản</a>
+                <ul class="submenu">
+                    <li><a href="profile.html" id="profile-btn">Hồ sơ</a></li>
+                    <li><a href="login.html" id="logout-btn">Đăng xuất</a></li>
+                </ul>
+            </li>
+        </ul>
+  </nav>
+  <main>
+    <div class="profile-container">
+      <form class="profile-form" id="profileForm">
+        <div style="text-align:center;">
+          <img id="avatarPreview" class="avatar-preview" src="../img/default-avatar.png" alt="Avatar">
+          <br>
+          <label for="avatarInput">Đổi hình đại diện:</label>
+          <input type="file" id="avatarInput" accept="image/*">
+        </div>
+        <!-- <label>Họ tên:</label>
+        <input type="text" id="fullname" value="Nguyễn Văn A" disabled>
+        <label>Email:</label>
+        <input type="text" id="email" value="user@email.com" disabled>
+        <hr> -->
+        <h3>Đổi mật khẩu</h3>
+        <label for="oldPassword">Mật khẩu cũ:</label>
+        <input type="password" id="oldPassword" required>
+        <label for="newPassword">Mật khẩu mới:</label>
+        <input type="password" id="newPassword" required>
+        <label for="confirmPassword">Nhập lại mật khẩu mới:</label>
+        <input type="password" id="confirmPassword" required>
+        <button type="submit">Đổi mật khẩu</button>
+      </form>
+      <div id="profileMsg" style="color:green; margin-top:12px;"></div>
+    </div>
+  </main>
+  <script>
+    // Lấy user hiện tại từ localStorage
+    function getCurrentUser() {
+      const user = localStorage.getItem('loggedInUser');
+      return user ? JSON.parse(user) : null;
+    }
+    function setCurrentUser(user) {
+      localStorage.setItem('loggedInUser', JSON.stringify(user));
+    }
+    // Cập nhật user trong danh sách users
+    function updateUserInList(updatedUser) {
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      users = users.map(u => u.username === updatedUser.username ? updatedUser : u);
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    // Hiển thị avatar nếu đã lưu
+    document.addEventListener('DOMContentLoaded', function() {
+      const user = getCurrentUser();
+      if (user && user.avatar) {
+        document.getElementById('avatarPreview').src = user.avatar;
+      }
+    });
+
+    // Đổi avatar thực sự
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          document.getElementById('avatarPreview').src = evt.target.result;
+          // Lưu avatar vào localStorage
+          let user = getCurrentUser();
+          if (user) {
+            user.avatar = evt.target.result;
+            setCurrentUser(user);
+            updateUserInList(user);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Đổi mật khẩu thực sự
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const oldPass = document.getElementById('oldPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      const msg = document.getElementById('profileMsg');
+      let user = getCurrentUser();
+      if (!user) {
+        msg.style.color = 'red';
+        msg.textContent = 'Không tìm thấy tài khoản!';
+        return;
+      }
+      if (oldPass !== user.password) {
+        msg.style.color = 'red';
+        msg.textContent = 'Mật khẩu cũ không đúng!';
+        return;
+      }
+      if (newPass !== confirmPass) {
+        msg.style.color = 'red';
+        msg.textContent = 'Mật khẩu mới không khớp!';
+        return;
+      }
+      if (newPass.length < 6) {
+        msg.style.color = 'red';
+        msg.textContent = 'Mật khẩu mới phải từ 6 ký tự!';
+        return;
+      }
+      // Lưu mật khẩu mới
+      user.password = newPass;
+      setCurrentUser(user);
+      updateUserInList(user);
+      msg.style.color = 'green';
+      msg.textContent = 'Đổi mật khẩu thành công!';
+      document.getElementById('oldPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+    });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      document.body.classList.add("fade-in");
+    });
+  </script>
+</body>
+</html>

@@ -30,7 +30,13 @@
       <li><a href="#sale">Khuyến mãi</a></li>
       <li><a href="mailto:lethanhlytrung123@gmail.com">Liên hệ</a></li>
       <li><a href="purchased.html">Hàng đã mua</a></li>
-      <li><a href="login.html" id="logout-btn">Đăng xuất</a></li>
+      <li class="account-menu">
+        <a href="#">Tài khoản</a>
+        <ul class="submenu">
+          <li><a href="profile.html" id="profile-btn">Hồ sơ</a></li>
+          <li><a href="login.html" id="logout-btn">Đăng xuất</a></li>
+        </ul>
+      </li>
     </ul>
   </nav>
 
@@ -85,8 +91,23 @@
     }
   </script>
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var profileBtn = document.getElementById('profile-btn');
+      if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = 'profile.html';
+        });
+      }
+    });
+  </script>
+  <script>
   document.body.classList.add('fade-in');
 </script>
+<script src="../js/data.js"></script>
+  <script src="../js/render-products.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/transition.js"></script>
 </body>
 
 </html>
